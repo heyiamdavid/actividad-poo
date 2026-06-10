@@ -22,3 +22,9 @@ class FabricaRegimenNivelacion(FabricaUniversitaria):
         
     def crear_evaluacion(self, nombre, calificacion):
         return Evaluacion(nombreEvaluacion=nombre, calificacion=float(calificacion))
+    
+    #creacion de areas de conocimiento
+    #exponer avance de proyecto 
+    #traer una parte funcional
+    #interfaz funcional 
+    

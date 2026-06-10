@@ -20,13 +20,10 @@ class CursoNivelacion:
         self.__evaluaciones.append(evaluacion)
 
     def asignar_profesor(self, profesor):
-
         self.profesor = profesor
 
-    def mostrar_curso(self):
+    def agregar_horario(self, horario):
+        print(f"Nota: Horario asignado a nivelación ({horario.dia})")
 
-        print(f"Curso: {self.nombreCurso}")
-        print(f"Paralelo: {self.paralelo}")
-
-        if self.profesor:
-            print(f"Profesor: {self.profesor.nombre}")
+    def agregar_aula(self, aula):
+        print(f"Nota: Aula asignada a nivelación ({aula.numeroAula})")

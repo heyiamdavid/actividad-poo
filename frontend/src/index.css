@@ -3,10 +3,10 @@
 /* === TOKENS === */
 :root {
   --bg: #f8f9fc;
-  --sidebar-bg: #1e293b;
+  --sidebar-bg: #9c2828;
   --card-bg: #ffffff;
-  --primary: #4f6ef7;
-  --primary-light: #eef0fe;
+  --primary: #ef4444;
+  --primary-light: #fef2f2;
   --success: #10b981;
   --text: #0f172a;
   --text-muted: #64748b;
@@ -58,7 +58,7 @@ body {
 }
 
 .sidebar-logo span {
-  color: #818cf8;
+  color: #fb7185;
 }
 
 .step-item {
@@ -69,7 +69,7 @@ body {
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s;
-  color: #94a3b8;
+  color: #c4abab;
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -77,11 +77,11 @@ body {
 .step-item:hover { background: rgba(255,255,255,0.07); color: #e2e8f0; }
 
 .step-item.active {
-  background: rgba(79, 110, 247, 0.25);
-  color: #a5b4fc;
+  background: rgba(239, 68, 68, 0.25);
+  color: #fecaca;
 }
 
-.step-item.done { color: #6ee7b7; }
+.step-item.done { color: #f8f9fc; }
 
 .step-num {
   width: 26px;
@@ -103,8 +103,8 @@ body {
 }
 
 .step-item.active .step-num {
-  background: #4f6ef7;
-  border-color: #4f6ef7;
+  background: #ef4444;
+  border-color: #ef4444;
   color: #fff;
 }
 
@@ -207,7 +207,7 @@ input:focus, select:focus {
   outline: none;
   border-color: var(--primary);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(79,110,247,0.15);
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
 }
 
 /* === REGIMEN TOGGLE === */
@@ -225,7 +225,7 @@ input:focus, select:focus {
   transition: all 0.2s;
 }
 
-.regimen-option:hover { border-color: #a5b4fc; background: var(--primary-light); }
+.regimen-option:hover { border-color: #fca5a5; background: var(--primary-light); }
 
 .regimen-option.selected {
   border-color: var(--primary);
@@ -265,7 +265,7 @@ input:focus, select:focus {
   transition: background 0.2s, transform 0.15s;
 }
 
-.btn-primary:hover:not(:disabled) { background: #3b55e0; transform: translateY(-1px); }
+.btn-primary:hover:not(:disabled) { background: #dc2626; transform: translateY(-1px); }
 .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
 
 .btn-secondary {
@@ -329,7 +329,7 @@ input:focus, select:focus {
   font-size: 0.75rem;
   text-transform: uppercase;
   font-weight: 600;
-  color: #6ee7b7;
+  color: #f8f9fc;
   letter-spacing: 0.05em;
 }
 

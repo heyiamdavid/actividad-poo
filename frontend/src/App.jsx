@@ -1,16 +1,15 @@
 import { useState } from 'react';
 
 const STEPS = [
-  { id: 1, label: 'Régimen' },
-  { id: 2, label: 'Estudiante' },
-  { id: 3, label: 'Profesor'},
-  { id: 4, label: 'Curso'},
-  { id: 5, label: 'Logística'},
-  { id: 6, label: 'Confirmar'},
+  { id: 1, label: 'Estudiante' },
+  { id: 2, label: 'Profesor'},
+  { id: 3, label: 'Curso'},
+  { id: 4, label: 'Logística'},
+  { id: 5, label: 'Confirmar'},
 ];
 
 const INITIAL = {
-  opcion_regimen: '1',
+  opcion_regimen: '2',
   estudiante: { nombre: '', telefono: '', email: '', id: '', contra: '', prom_ingreso: 0, prom_graduacion: 0, estado: 'Activo', modalidad: 'Presencial' },
   profesor:    { nombre: '', telefono: '', email: '', id: '', contra: '', materia: '', titulo: '' },
   curso:       { nombre: '', paralelo: 'A', codigo: '', creditos: '' },
@@ -37,7 +36,7 @@ export default function App() {
 
   const advance = () => {
     setDone(d => d.includes(step) ? d : [...d, step]);
-    setStep(s => Math.min(s + 1, 6));
+    setStep(s => Math.min(s + 1, 5));
   };
 
   const goTo = (s) => { if (s < step || done.includes(s - 1) || s === 1) setStep(s); };
@@ -88,40 +87,11 @@ export default function App() {
       <main className="main">
         <div className="page-header">
           <h1>Registro de Matrícula</h1>
-          <p>Paso {step} de 6 — {STEPS[step - 1].label}</p>
+          <p>Paso {step} de 5 — {STEPS[step - 1].label}</p>
         </div>
 
-        {/* STEP 1 — Régimen */}
+        {/* STEP 1 — Estudiante */}
         {step === 1 && (
-          <div className="card">
-            <div className="card-header">
-              
-              <h2>Seleccione el Régimen Académico</h2>
-            </div>
-            <div className="regimen-toggle">
-              <div
-                className={`regimen-option ${formData.opcion_regimen === '1' ? 'selected' : ''}`}
-                onClick={() => set('root', 'opcion_regimen', '1')}
-              >
-                <div className="ro-title">Régimen Regular</div>
-                <div className="ro-desc">Para estudiantes en carreras con créditos y código de materia.</div>
-              </div>
-              <div
-                className={`regimen-option ${formData.opcion_regimen === '2' ? 'selected' : ''}`}
-                onClick={() => set('root', 'opcion_regimen', '2')}
-              >
-                <div className="ro-title">Régimen de Nivelación</div>
-                <div className="ro-desc">Para estudiantes en proceso de nivelación con paralelos.</div>
-              </div>
-            </div>
-            <div className="actions" style={{ marginTop: '1.5rem' }}>
-              <button className="btn-primary" onClick={advance}>Siguiente →</button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 2 — Estudiante */}
-        {step === 2 && (
           <div className="card">
             <div className="card-header">
               <h2>Información del Estudiante</h2>
@@ -129,7 +99,7 @@ export default function App() {
             <div className="grid-2">
               <div className="form-group">
                 <label>Nombre Completo</label>
-                <input type="text" placeholder="Ej. Juan Pérez" value={formData.estudiante.nombre} onChange={e => set('estudiante', 'nombre', e.target.value)} />
+                <input type="text" placeholder="Ej. Alejandro Espinoza" value={formData.estudiante.nombre} onChange={e => set('estudiante', 'nombre', e.target.value)} />
               </div>
               <div className="form-group">
                 <label>Identificación (Cédula)</label>
@@ -137,7 +107,7 @@ export default function App() {
               </div>
               <div className="form-group">
                 <label>Correo Electrónico</label>
-                <input type="email" placeholder="correo@universidad.edu" value={formData.estudiante.email} onChange={e => set('estudiante', 'email', e.target.value)} />
+                <input type="email" placeholder="ecedula@danu.uleam.edu.ec" value={formData.estudiante.email} onChange={e => set('estudiante', 'email', e.target.value)} />
               </div>
               <div className="form-group">
                 <label>Teléfono</label>
@@ -157,14 +127,13 @@ export default function App() {
               </div>
             </div>
             <div className="actions">
-              <button className="btn-secondary" onClick={() => setStep(1)}>← Atrás</button>
               <button className="btn-primary" onClick={advance}>Siguiente →</button>
             </div>
           </div>
         )}
 
-        {/* STEP 3 — Profesor */}
-        {step === 3 && (
+        {/* STEP 2 — Profesor */}
+        {step === 2 && (
           <div className="card">
             <div className="card-header">
               <h2>Información del Profesor</h2>
@@ -188,14 +157,14 @@ export default function App() {
               </div>
             </div>
             <div className="actions">
-              <button className="btn-secondary" onClick={() => setStep(2)}>← Atrás</button>
+              <button className="btn-secondary" onClick={() => setStep(1)}>← Atrás</button>
               <button className="btn-primary" onClick={advance}>Siguiente →</button>
             </div>
           </div>
         )}
 
-        {/* STEP 4 — Curso */}
-        {step === 4 && (
+        {/* STEP 3 — Curso */}
+        {step === 3 && (
           <div className="card">
             <div className="card-header">
               <h2>Detalles del Curso</h2>
@@ -205,37 +174,24 @@ export default function App() {
                 <label>Nombre del Curso</label>
                 <input type="text" placeholder="Ej. Álgebra Lineal" value={formData.curso.nombre} onChange={e => set('curso', 'nombre', e.target.value)} />
               </div>
-              {formData.opcion_regimen === '2' ? (
-                <div className="form-group">
-                  <label>Paralelo</label>
-                  <input type="text" placeholder="Ej. A" value={formData.curso.paralelo} onChange={e => set('curso', 'paralelo', e.target.value)} />
-                </div>
-              ) : (
-                <>
-                  <div className="form-group">
-                    <label>Código del Curso</label>
-                    <input type="text" placeholder="Ej. MAT-101" value={formData.curso.codigo} onChange={e => set('curso', 'codigo', e.target.value)} />
-                  </div>
-                  <div className="form-group">
-                    <label>Créditos</label>
-                    <input type="number" placeholder="Ej. 3" value={formData.curso.creditos} onChange={e => set('curso', 'creditos', e.target.value)} />
-                  </div>
-                </>
-              )}
+              <div className="form-group">
+                <label>Paralelo</label>
+                <input type="text" placeholder="Ej. A" value={formData.curso.paralelo} onChange={e => set('curso', 'paralelo', e.target.value)} />
+              </div>
               <div className="form-group">
                 <label>Fecha de Matrícula</label>
                 <input type="date" value={formData.fecha_matricula} onChange={e => set('root', 'fecha_matricula', e.target.value)} />
               </div>
             </div>
             <div className="actions">
-              <button className="btn-secondary" onClick={() => setStep(3)}>← Atrás</button>
+              <button className="btn-secondary" onClick={() => setStep(2)}>← Atrás</button>
               <button className="btn-primary" onClick={advance}>Siguiente →</button>
             </div>
           </div>
         )}
 
-        {/* STEP 5 — Logística */}
-        {step === 5 && (
+        {/* STEP 4 — Logística */}
+        {step === 4 && (
           <div className="card">
             <div className="card-header">
               <h2>Horario y Aula</h2>
@@ -265,23 +221,19 @@ export default function App() {
               </div>
             </div>
             <div className="actions">
-              <button className="btn-secondary" onClick={() => setStep(4)}>← Atrás</button>
+              <button className="btn-secondary" onClick={() => setStep(3)}>← Atrás</button>
               <button className="btn-primary" onClick={advance}>Revisar →</button>
             </div>
           </div>
         )}
 
-        {/* STEP 6 — Confirmar */}
-        {step === 6 && !result && (
+        {/* STEP 5 — Confirmar */}
+        {step === 5 && !result && (
           <div className="card">
             <div className="card-header">
               <h2>Resumen y Confirmación</h2>
             </div>
             <div className="result-grid">
-              <div className="result-item">
-                <div className="result-label">Régimen</div>
-                <div className="result-value">{formData.opcion_regimen === '1' ? 'Regular' : 'Nivelación'}</div>
-              </div>
               <div className="result-item">
                 <div className="result-label">Estudiante</div>
                 <div className="result-value">{formData.estudiante.nombre || '—'}</div>
@@ -304,7 +256,7 @@ export default function App() {
               </div>
             </div>
             <div className="actions">
-              <button className="btn-secondary" onClick={() => setStep(5)}>← Editar</button>
+              <button className="btn-secondary" onClick={() => setStep(4)}>← Editar</button>
               <button className="btn-primary" onClick={submit} disabled={loading}>
                 {loading ? 'Guardando...' : ' Confirmar Matrícula'}
               </button>

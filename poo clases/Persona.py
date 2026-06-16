@@ -14,13 +14,14 @@ class Persona(Autenticable, ABC):
         self.telefono = telefono
         self.email = email
         self.identificacion = identificacion
-
         self.__contrasena = contrasena
-
+  
+    # Encapsulación mediante Property
     @property
     def contrasena(self):
         return self.__contrasena
 
+    # Encapsulación
     @contrasena.setter
     def contrasena(self, nueva_contrasena):
 
@@ -29,10 +30,14 @@ class Persona(Autenticable, ABC):
         else:
             print("Contraseña inválida")
 
+    # Método heredado de la interfaz/clase Autenticable
+    # Polimorfismo 
     def iniciar_sesion(self):
 
         print(f"\nBienvenido {self.nombre}")
 
+    # Método heredado de la interfaz/clase Autenticable
+    # Polimorfismo
     def cerrar_sesion(self):
 
         print(f"\nSesión cerrada para {self.nombre}")

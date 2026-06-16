@@ -27,21 +27,30 @@ class Evaluacion:
             f"{self.__calificacion}"
         )
 
-    def corregir_evaluacion(self,
-                            puntos_extra=0):
+    def corregir_evaluacion(self, *args):
+    #Sobrecarga de método mediante *args
+        if len(args) == 0:
+            print(f"Nota sin cambios: {self.__calificacion}")
+            return self.__calificacion
 
-        nueva_nota = (
-            self.__calificacion +
-            puntos_extra
-        )
+        if len(args) == 1 and isinstance(args[0], Evaluacion):
+            otra_evaluacion = args[0]
+            nueva_nota = (self.__calificacion + otra_evaluacion.calificacion) / 2
+
+        elif len(args) == 1:
+            puntos_extra = args[0]
+            nueva_nota = (self.__calificacion + puntos_extra)
+
+        else:
+            print("Argumentos inválidos para corregir evaluacion")
+            return self.__calificacion
 
         if nueva_nota > 10:
             nueva_nota = 10
-
+        elif nueva_nota < 0:
+            nueva_nota = 0
         self.__calificacion = nueva_nota
+        print(f"Nueva nota: {self.__calificacion}")
+        return self.__calificacion
 
-        print(
-            f"Nueva nota: "
-            f"{self.__calificacion}"
-        )
         

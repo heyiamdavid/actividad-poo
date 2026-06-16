@@ -6,26 +6,31 @@ from Sede import Sede
 from Facultad import Facultad
 from Carrera import Carrera
 
-from Curso import Curso
 from Horario import Horario
 from Aula import Aula
 
 from Nivelacion import Nivelacion
-from CursoNivelacion import CursoNivelacion
 
 from Evaluacion import Evaluacion
 from Matricula import Matricula
 
 from Reporte import Reporte
 
-from BaseDatos import *
+from RepositorioSQLite import RepositorioSQLite
+from GestorUniversidad import GestorUniversidad
 
-crear_bd()
+# --- Patrón creacional (Factory Method) ---
+from FabricaUniversitaria import (FabricaRegimenRegular, FabricaRegimenNivelacion)
+
+repositorio = RepositorioSQLite("universidad.db")
+gestor = GestorUniversidad(repositorio)
+
+fabrica_regular = FabricaRegimenRegular()
+fabrica_nivelacion = FabricaRegimenNivelacion()
+
 
 def registrar_estudiante():
-
-    print("\n========== REGISTRO ESTUDIANTE ==========\n")
-
+    print("REGISTRO ESTUDIANTE")
     nombre = input("Nombre: ")
     telefono = input("Teléfono: ")
     email = input("Email: ")
@@ -68,82 +73,27 @@ def registrar_estudiante():
     )
 
     facultad.agregar_carrera(carrera)
-
-    sede.agregar_facultad(
-        facultad
-    )
-
-    universidad.agregar_sede(
-        sede
-    )
-
-    estudiante = Estudiante(
-        nombre,
-        telefono,
-        email,
-        identificacion,
-        contrasena,
-        promedio_ingreso,
-        promedio_graduacion,
-        estado,
-        modalidad
-    )
-
-    carrera.agregar_estudiante(
-        estudiante
-    )
-
+    sede.agregar_facultad(facultad)
+    universidad.agregar_sede(sede)
+    estudiante = Estudiante(nombre, telefono, email, identificacion, contrasena, promedio_ingreso, promedio_graduacion, estado, modalidad)
+    carrera.agregar_estudiante(estudiante)
     if promedio_ingreso < 7:
-
-        nivelacion = Nivelacion(
-            "2026-A",
-            3
-        )
-
-        curso_nivelacion = CursoNivelacion(
-            "Matemática Básica",
-            "A1"
-        )
-
-        nivelacion.agregar_curso(
-            curso_nivelacion
-        )
-
-        carrera.agregar_nivelacion(
-            nivelacion
-        )
-
-        print(
-            "\nEl estudiante requiere "
-            "nivelación académica"
-        )
-
-    guardar_estudiante(
-        estudiante
-    )
+        nivelacion = Nivelacion("2026-A", 3)
+        curso_nivelacion = fabrica_nivelacion.crear_curso("Matemática Básica", "A1", None)
+        nivelacion.agregar_curso(curso_nivelacion)
+        carrera.agregar_nivelacion(nivelacion)
+        print("El estudiante requiere nivelación académica")
+    gestor.registrar_estudiante(estudiante)
 
 def registrar_profesor():
-
-    print("\n========== REGISTRO PROFESOR ==========\n")
-
+    print("REGISTRO PROFESOR")
     nombre = input("Nombre: ")
     telefono = input("Teléfono: ")
     email = input("Email: ")
-    identificacion = input(
-        "Identificación: "
-    )
-
-    contrasena = input(
-        "Contraseña: "
-    )
-
-    materia = input(
-        "Materia: "
-    )
-
-    titulo = input(
-        "Título: "
-    )
+    identificacion = input("Identificación: ")
+    contrasena = input("Contraseña: ")
+    materia = input("Materia: ")
+    titulo = input("Título: ")
 
     profesor = Profesor(
         nombre,
@@ -154,319 +104,163 @@ def registrar_profesor():
         materia,
         titulo
     )
+    gestor.registrar_profesor(profesor)
 
-    guardar_profesor(
-        profesor
-    )
-
-def menu_estudiante(
-        estudiante):
-
+def menu_estudiante(estudiante):
     estudiante.iniciar_sesion()
+    opciones = {
+        "1": estudiante.mostrar_datos,
+        "2": estudiante.consultar_cursos,
+        "3": estudiante.elegir_modalidad,
+        "4": estudiante.ver_notas,
+    }
 
     while True:
-
-        print("\n========================")
         print("MENÚ ESTUDIANTE")
-        print("========================")
-
         print("1. Ver datos")
         print("2. Consultar cursos")
         print("3. Ver modalidad")
         print("4. Ver notas")
         print("5. Cerrar sesión")
-
-        opcion = input(
-            "\nSeleccione: "
-        )
-
-        if opcion == "1":
-
-            estudiante.mostrar_datos()
-
-        elif opcion == "2":
-
-            estudiante.consultar_cursos()
-
-        elif opcion == "3":
-
-            estudiante.elegir_modalidad()
-
-        elif opcion == "4":
-
-            estudiante.ver_notas()
-
-        elif opcion == "5":
-
+        opcion = input("Seleccione: ")
+        if opcion == "5":
             estudiante.cerrar_sesion()
             break
-
+        accion = opciones.get(opcion)
+        if accion:
+            accion()
         else:
-
             print("Opción inválida")
 
-def menu_profesor(
-        profesor):
 
+def menu_profesor(profesor):
     profesor.iniciar_sesion()
 
     while True:
-
-        print("\n========================")
         print("MENÚ PROFESOR")
-        print("========================")
-
         print("1. Ver datos")
         print("2. Crear evaluación")
         print("3. Registrar nota")
         print("4. Cerrar sesión")
-
-        opcion = input(
-            "\nSeleccione: "
-        )
-
+        opcion = input("Seleccione: ")
         if opcion == "1":
-
             profesor.mostrar_datos()
-
         elif opcion == "2":
+            nombre = input("Nombre evaluación: ")
+            nota = float(input("Calificación: "))
 
-            nombre = input(
-                "Nombre evaluación: "
-            )
-
-            nota = float(
-                input("Calificación: ")
-            )
-
-            evaluacion = Evaluacion(
-                nombre,
-                nota
-            )
-
-            profesor.crear_evaluacion(
-                evaluacion
-            )
-
+            # Creación delegada a la fábrica 
+            evaluacion = fabrica_regular.crear_evaluacion(nombre, nota)
+            profesor.crear_evaluacion(evaluacion)
         elif opcion == "3":
-
-            nota = float(
-                input("Nota: ")
-            )
-
-            profesor.registrar_nota(
-                nota
-            )
-
+            nota = float(input("Nota: "))
+            profesor.registrar_nota(nota)
         elif opcion == "4":
-
             profesor.cerrar_sesion()
             break
-
         else:
-
             print("Opción inválida")
 
 def login_estudiante():
-
-    print("\n========== LOGIN ESTUDIANTE ==========\n")
-
-    identificacion = input(
-        "Identificación: "
+    print("LOGIN ESTUDIANTE")
+    identificacion = input("Identificación: ")
+    contrasena = input("Contraseña: ")
+    datos = gestor.autenticar_estudiante(identificacion, contrasena)
+    if not datos:
+        print("Credenciales incorrectas")
+        return
+    estudiante = Estudiante(
+        datos[1],  # nombre
+        datos[2],  # telefono
+        datos[3],  # email
+        datos[4],  # identificacion
+        datos[5],  # contrasena
+        datos[6],  # promedio ingreso
+        datos[7],  # promedio graduacion
+        datos[8],  # estado
+        datos[9]   # modalidad
     )
 
-    contrasena = input(
-        "Contraseña: "
+    # Creación del curso regular vía Factory Method.
+    curso = fabrica_regular.crear_curso(
+        "Programación",
+        "SOF101",
+        4
     )
+    horario = Horario("Lunes", "08:00", "10:00")
+    aula = Aula("A-101", 40)
+    matricula = Matricula("08/06/2026", estudiante)
 
-    datos = validar_login_estudiante(
-        identificacion,
-        contrasena
-    )
-
-    if datos:
-
-        estudiante = Estudiante(
-
-            datos[1],  # nombre
-            datos[2],  # telefono
-            datos[3],  # email
-            datos[4],  # identificacion
-            datos[5],  # contrasena
-            datos[6],  # promedio ingreso
-            datos[7],  # promedio graduacion
-            datos[8],  # estado
-            datos[9]   # modalidad
-
-        )
-
-        curso = Curso(
-            "SOF101",
-            "Programación",
-            4
-        )
-
-        horario = Horario(
-            "Lunes",
-            "08:00",
-            "10:00"
-        )
-
-        aula = Aula(
-            "A-101",
-            40
-        )
-
-        curso.agregar_horario(
-            horario
-        )
-
-        curso.agregar_aula(
-            aula
-        )
-
-        matricula = Matricula(
-            "08/06/2026",
-            estudiante
-        )
-
-        matricula.agregar_curso(
-            curso
-        )
-
-        menu_estudiante(
-            estudiante
-        )
-
-    else:
-
-        print(
-            "\nCredenciales incorrectas"
-        )
+    # Sobrecarga de agregar_curso
+    matricula.agregar_curso(curso, horario, aula)
+    menu_estudiante(estudiante)
 
 def login_profesor():
-
-    print("\n========== LOGIN PROFESOR ==========\n")
-
-    identificacion = input(
-        "Identificación: "
-    )
-
-    contrasena = input(
-        "Contraseña: "
-    )
-
-    datos = validar_login_profesor(
+    print("LOGIN PROFESOR")
+    identificacion = input("Identificación: ")
+    contrasena = input("Contraseña: ")
+    datos = gestor.autenticar_profesor(
         identificacion,
         contrasena
     )
+    if not datos:
+        print("Credenciales incorrectas")
+        return
 
-    if datos:
-
-        profesor = Profesor(
-
-            datos[1],  # nombre
-            datos[2],  # telefono
-            datos[3],  # email
-            datos[4],  # identificacion
-            datos[5],  # contrasena
-            datos[6],  # materia
-            datos[7]   # titulo
-
-        )
-
-        menu_profesor(
-            profesor
-        )
-
-    else:
-
-        print(
-            "\nCredenciales incorrectas"
-        )
+    profesor = Profesor(
+        datos[1],  # nombre
+        datos[2],  # telefono
+        datos[3],  # email
+        datos[4],  # identificacion
+        datos[5],  # contrasena
+        datos[6],  # materia
+        datos[7]   # titulo
+    )
+    
+    menu_profesor(profesor)
 
 def menu_reportes():
-
     while True:
-
-        print("\n========================")
         print("REPORTES")
-        print("========================")
-
         print("1. Ver estudiantes")
         print("2. Ver profesores")
         print("3. Resumen general")
         print("4. Volver")
-
-        opcion = input(
-            "\nSeleccione: "
-        )
-
+        opcion = input("Seleccione: ")
         if opcion == "1":
-
-            estudiantes = (
-                mostrar_estudiantes()
-            )
-
-            reporte = Reporte(
-                "Estudiantil"
-            )
-
-            reporte.generar_reporte_estudiantil(
-                estudiantes
-            )
-
+            estudiantes = gestor.listar_estudiantes()
+            reporte = Reporte("Estudiantil")
+            reporte.generar_reporte_estudiantil(estudiantes)
         elif opcion == "2":
-
-            profesores = (
-                mostrar_profesores()
-            )
-
-            reporte = Reporte(
-                "Profesores"
-            )
-
-            reporte.generar_reporte_profesores(
-                profesores
-            )
-
+            profesores = gestor.listar_profesores()
+            reporte = Reporte("Profesores")
+            reporte.generar_reporte_profesores(profesores)
         elif opcion == "3":
-
-            estudiantes = (
-                mostrar_estudiantes()
-            )
-
-            profesores = (
-                mostrar_profesores()
-            )
-
-            reporte = Reporte(
-                "General"
-            )
-
+            estudiantes = gestor.listar_estudiantes()
+            profesores = gestor.listar_profesores()
+            reporte = Reporte("General")
             reporte.generar_reporte_general(
                 estudiantes,
                 profesores
             )
-
         elif opcion == "4":
-
             break
-
         else:
+            print("Opción inválida")
 
-            print(
-                "\nOpción inválida"
-            )
 
 def menu_principal():
+    opciones = {
+        "1": registrar_estudiante,
+        "2": registrar_profesor,
+        "3": login_estudiante,
+        "4": login_profesor,
+        "5": menu_reportes,
+    }
 
     while True:
 
-        print("\n=================================")
         print("SISTEMA UNIVERSITARIO")
-        print("=================================")
-
         print("1. Registrar estudiante")
         print("2. Registrar profesor")
         print("3. Iniciar sesión estudiante")
@@ -474,43 +268,16 @@ def menu_principal():
         print("5. Reportes")
         print("6. Salir")
 
-        opcion = input(
-            "\nSeleccione: "
-        )
-
-        if opcion == "1":
-
-            registrar_estudiante()
-
-        elif opcion == "2":
-
-            registrar_profesor()
-
-        elif opcion == "3":
-
-            login_estudiante()
-
-        elif opcion == "4":
-
-            login_profesor()
-
-        elif opcion == "5":
-
-            menu_reportes()
-
-        elif opcion == "6":
-
-            print(
-                "\nPrograma finalizado"
-            )
-
+        opcion = input("Seleccione: ")
+        if opcion == "6":
+            print("\nPrograma finalizado")
             break
-
+        accion = opciones.get(opcion)
+        if accion:
+            accion()
         else:
+            print("\nOpción inválida")
 
-            print(
-                "\nOpción inválida"
-            )
 
 if __name__ == "__main__":
 

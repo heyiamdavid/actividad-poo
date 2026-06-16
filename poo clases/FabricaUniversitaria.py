@@ -14,7 +14,7 @@ class FabricaUniversitaria(ABC):
         pass
 
 class FabricaRegimenRegular(FabricaUniversitaria):
-    """Fábrica concreta para cursos del régimen regular."""
+    #Fábrica concreta para cursos del régimen regular
 
     def crear_curso(self, nombre, identificador, extra):
         return Curso(codigoCurso=identificador, nombreCurso=nombre, creditos=int(extra))
@@ -23,13 +23,9 @@ class FabricaRegimenRegular(FabricaUniversitaria):
         return Evaluacion(nombreEvaluacion=nombre, calificacion=float(calificacion))
         
 class FabricaRegimenNivelacion(FabricaUniversitaria):
-    """Fábrica concreta para cursos de nivelación."""
+    #Fábrica concreta para cursos de nivelación
     def crear_curso(self, nombre, identificador, extra):
         return CursoNivelacion(nombreCurso=nombre, paralelo=identificador, profesor=extra)
 
     def crear_evaluacion(self, nombre, calificacion):
-
-        return Evaluacion(
-            nombreEvaluacion=nombre,
-            calificacion=float(calificacion)
-        )
+        return Evaluacion(nombreEvaluacion=nombre, calificacion=float(calificacion))

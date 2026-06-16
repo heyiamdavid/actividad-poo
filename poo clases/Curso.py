@@ -1,13 +1,9 @@
 class Curso:
 
-    def __init__(self,
-                 codigoCurso,
-                 nombreCurso,
-                 creditos):
+    def __init__(self, codigoCurso, nombreCurso, creditos):
 
         self.codigoCurso = codigoCurso
         self.nombreCurso = nombreCurso
-
         self.__creditos = creditos
 
         # Composición
@@ -44,14 +40,14 @@ class Curso:
 
     def mostrar_curso(self):
 
-        print("\n========== CURSO ==========")
+        print("CURSO")
         print(f"Código: {self.codigoCurso}")
         print(f"Nombre: {self.nombreCurso}")
         print(f"Créditos: {self.__creditos}")
 
     def mostrar_horarios(self):
 
-        print("\nHorarios:")
+        print("Horarios:")
 
         if len(self.__horarios) == 0:
             print("No existen horarios")

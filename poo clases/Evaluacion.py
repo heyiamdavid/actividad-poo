@@ -1,11 +1,8 @@
 class Evaluacion:
 
-    def __init__(self,
-                 nombreEvaluacion,
-                 calificacion=0):
+    def __init__(self, nombreEvaluacion, calificacion=0):
 
         self.nombreEvaluacion = nombreEvaluacion
-
         self.__calificacion = calificacion
 
     @property
@@ -32,11 +29,11 @@ class Evaluacion:
         if len(args) == 0:
             print(f"Nota sin cambios: {self.__calificacion}")
             return self.__calificacion
-
+    # Corrige usando otra evaluación
         if len(args) == 1 and isinstance(args[0], Evaluacion):
             otra_evaluacion = args[0]
             nueva_nota = (self.__calificacion + otra_evaluacion.calificacion) / 2
-
+    # Corrige agregando puntos extra
         elif len(args) == 1:
             puntos_extra = args[0]
             nueva_nota = (self.__calificacion + puntos_extra)

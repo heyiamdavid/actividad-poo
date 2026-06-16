@@ -1,9 +1,6 @@
 class CursoNivelacion:
 
-    def __init__(self,
-                 nombreCurso,
-                 paralelo,
-                 profesor=None):
+    def __init__(self, nombreCurso, paralelo, profesor=None):
 
         self.nombreCurso = nombreCurso
         self.paralelo = paralelo
@@ -27,7 +24,7 @@ class CursoNivelacion:
 
     def mostrar_curso(self):
 
-        print("\n========== CURSO NIVELACIÓN ==========")
+        print(" CURSO NIVELACIÓN")
         print(f"Curso: {self.nombreCurso}")
         print(f"Paralelo: {self.paralelo}")
 

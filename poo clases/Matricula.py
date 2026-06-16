@@ -1,19 +1,18 @@
 class Matricula:
 
+    # Constructor
     def __init__(self,
                  fecha,
                  estudiante=None):
-
         self.fecha = fecha
-
         self.estudiante = estudiante
 
+#       Encapsulación
         self.__cursos = []
 
     @property
     def cursos(self):
         return self.__cursos
-
 
     def agregar_curso(self, curso):
 

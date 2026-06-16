@@ -1,10 +1,10 @@
 import sqlite3
-
+# Gestión de la base de datos del sistema universitario
 def crear_bd():
 
     conexion = sqlite3.connect("universidad.db")
     cursor = conexion.cursor()
-
+# Crear tablas si no existen
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS estudiantes(
 
@@ -42,7 +42,7 @@ def crear_bd():
 
     conexion.commit()
     conexion.close()
-
+# Guarda un estudiante en la base de datos
 def guardar_estudiante(estudiante):
 
     conexion = sqlite3.connect("universidad.db")
@@ -80,14 +80,11 @@ def guardar_estudiante(estudiante):
 
         conexion.commit()
 
-        print("\nEstudiante guardado correctamente")
+        print("Estudiante guardado correctamente")
 
     except sqlite3.IntegrityError:
 
-        print(
-            "\nYa existe un estudiante con "
-            "esa identificación"
-        )
+        print("Ya existe un estudiante con esa identificación")
 
     finally:
 
@@ -126,14 +123,11 @@ def guardar_profesor(profesor):
 
         conexion.commit()
 
-        print("\nProfesor guardado correctamente")
+        print("Profesor guardado correctamente")
 
     except sqlite3.IntegrityError:
 
-        print(
-            "\nYa existe un profesor con "
-            "esa identificación"
-        )
+        print("Ya existe un profesor con esa identificación")
 
     finally:
 
@@ -206,10 +200,8 @@ def mostrar_profesores():
     conexion.close()
 
     return datos
-
-def validar_login_estudiante(
-        identificacion,
-        contrasena):
+# Validar credenciales de acceso del estudiante
+def validar_login_estudiante(identificacion, contrasena):
 
     conexion = sqlite3.connect("universidad.db")
     cursor = conexion.cursor()
@@ -231,9 +223,7 @@ def validar_login_estudiante(
 
     return usuario
 
-def validar_login_profesor(
-        identificacion,
-        contrasena):
+def validar_login_profesor(identificacion, contrasena):
 
     conexion = sqlite3.connect("universidad.db")
     cursor = conexion.cursor()
@@ -255,8 +245,7 @@ def validar_login_profesor(
 
     return usuario
 
-def eliminar_estudiante(
-        identificacion):
+def eliminar_estudiante(identificacion):
 
     conexion = sqlite3.connect("universidad.db")
     cursor = conexion.cursor()
@@ -270,8 +259,7 @@ def eliminar_estudiante(
     conexion.commit()
     conexion.close()
 
-def eliminar_profesor(
-        identificacion):
+def eliminar_profesor(identificacion):
 
     conexion = sqlite3.connect("universidad.db")
     cursor = conexion.cursor()

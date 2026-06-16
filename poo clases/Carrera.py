@@ -1,3 +1,4 @@
+# Clase que representa una carrera universitaria
 class Carrera:
 
     def __init__(self,
@@ -45,17 +46,14 @@ class Carrera:
 
     def mostrar_carrera(self):
 
-        print("\n========== CARRERA ==========")
+        print(" CARRERA ")
         print(f"Código: {self.codigoCarrera}")
         print(f"Nombre: {self.nombreCarrera}")
         print(f"Modalidad: {self.__modalidad}")
 
     def listar_estudiantes(self):
 
-        print(
-            f"\n===== ESTUDIANTES DE "
-            f"{self.nombreCarrera} ====="
-        )
+        print(f"ESTUDIANTES DE: {self.nombreCarrera}")
 
         if len(self.__estudiantes) == 0:
             print("No existen estudiantes")
@@ -63,9 +61,7 @@ class Carrera:
 
         for estudiante in self.__estudiantes:
 
-            print(
-                f"- {estudiante.nombre}"
-            )
+            print(f"- {estudiante.nombre}")
 
     def tiene_nivelacion(self):
 

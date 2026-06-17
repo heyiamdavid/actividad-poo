@@ -34,7 +34,7 @@ export default function Login() {
       } else {
         setError(data.detail || 'Credenciales incorrectas');
       }
-    } catch (err) {
+    } catch {
       setError('Error al conectar con el servidor.');
     } finally {
       setLoading(false);

@@ -4,19 +4,19 @@ import { User, ClipboardList, PenTool, ListChecks, LogOut, GraduationCap } from 
 
 export default function DashboardProfesor() {
   const [activeTab, setActiveTab] = useState('datos');
-  const [user, setUser] = useState(null);
+  const [user] = useState(() => {
+    const stored = localStorage.getItem('user');
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    return parsed.rol === 'profesor' ? parsed : null;
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (!stored) {
+    if (!user) {
       navigate('/login');
-    } else {
-      const parsed = JSON.parse(stored);
-      if (parsed.rol !== 'profesor') navigate('/login');
-      else setUser(parsed);
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');

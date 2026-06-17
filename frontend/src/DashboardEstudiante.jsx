@@ -4,19 +4,19 @@ import { User, Library, GraduationCap, Award, LogOut } from 'lucide-react';
 
 export default function DashboardEstudiante() {
   const [activeTab, setActiveTab] = useState('datos');
-  const [user, setUser] = useState(null);
+  const [user] = useState(() => {
+    const stored = localStorage.getItem('user');
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    return parsed.rol === 'estudiante' ? parsed : null;
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (!stored) {
+    if (!user) {
       navigate('/login');
-    } else {
-      const parsed = JSON.parse(stored);
-      if (parsed.rol !== 'estudiante') navigate('/login');
-      else setUser(parsed);
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');

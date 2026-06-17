@@ -1,16 +1,11 @@
 from Persona import Persona
+from Evaluacion import Evaluacion
 
+#Clase Profesor
 class Profesor(Persona):
 
-    # Herencia y reutilización de código mediante super()
-    def __init__(self,
-                 nombre,
-                 telefono,
-                 email,
-                 identificacion,
-                 contrasena,
-                 materia,
-                 titulo):
+    def __init__(self, nombre, telefono, email, identificacion,
+                 contrasena, materia, titulo):
 
         super().__init__(
             nombre,
@@ -22,11 +17,10 @@ class Profesor(Persona):
 
         self.materia = materia
         self.titulo = titulo
-    #Encapsulacion en las listas
+
         self.__notas = []
         self.__evaluaciones = []
 
-    # Encapsulación
     @property
     def notas(self):
         return self.__notas
@@ -35,51 +29,73 @@ class Profesor(Persona):
     def evaluaciones(self):
         return self.__evaluaciones
 
-    # Abstracción
-    # Permite registrar notas ocultando la lógica interna.
     def registrar_nota(self, nota):
 
         if 0 <= nota <= 10:
 
             self.__notas.append(nota)
-
-            print("Nota registrada correctamente")
+            print("\nNota registrada correctamente.")
 
         else:
-            print("Nota inválida")
 
-    # Asociación
-    # Un profesor puede crear y administrar objetos Evaluacion.
-    def crear_evaluacion(self, evaluacion):
+            print("\nLa nota debe estar entre 0 y 10.")
+
+    def crear_evaluacion(self):
+
+        nombre = input("Nombre de la evaluación: ")
+        nota = float(input("Calificación inicial: "))
+
+        evaluacion = Evaluacion(nombre, nota)
 
         self.__evaluaciones.append(evaluacion)
 
-        print(
-            f"Evaluación {evaluacion.nombreEvaluacion} registrada"
-        )
+        print("\nEvaluación creada correctamente.")
 
-    # Asociación
-    # Interactúa con una colección de objetos Estudiante.
+        return evaluacion
+
     def listar_estudiantes(self, estudiantes):
 
-        print("\n========== ESTUDIANTES ==========")
-
         if len(estudiantes) == 0:
-            print("No existen estudiantes")
+
+            print("\nNo existen estudiantes registrados.")
             return
 
+        print("\n===== ESTUDIANTES =====")
+
         for estudiante in estudiantes:
+            print(estudiante.nombre)
 
-            print(
-                f"{estudiante.nombre} - "
-                f"{estudiante.identificacion}"
-            )
+    def mostrar_notas(self):
 
-    # Polimorfismo (Sobrescritura de método), se redefine mostrar_datos() heredado de Persona,
-    # agregando información específica del profesor.
+        if len(self.__notas) == 0:
+
+            print("\nNo existen notas registradas.")
+            return
+
+        print("\n===== NOTAS =====")
+
+        for nota in self.__notas:
+            print(nota)
+
+    def mostrar_evaluaciones(self):
+
+        if len(self.__evaluaciones) == 0:
+
+            print("\nNo existen evaluaciones.")
+            return
+
+        print("\n===== EVALUACIONES =====")
+
+        for evaluacion in self.__evaluaciones:
+            evaluacion.mostrar_calificacion()
+
     def mostrar_datos(self):
 
-        super().mostrar_datos()
+        print("\n========== DATOS PROFESOR ==========")
 
-        print(f"Materia: {self.materia}")
-        print(f"Título: {self.titulo}")
+        print("Nombre:", self.nombre)
+        print("Teléfono:", self.telefono)
+        print("Email:", self.email)
+        print("Identificación:", self.identificacion)
+        print("Materia:", self.materia)
+        print("Título:", self.titulo)

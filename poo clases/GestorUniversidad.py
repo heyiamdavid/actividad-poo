@@ -1,13 +1,13 @@
 from RepositorioBase import RepositorioBase
 
+#Administrador (GestorUniversidad)
 class GestorUniversidad:
-   # INYECCIÓN DE DEPENDENCIAS:
+
     def __init__(self, repositorio: RepositorioBase):
-        if not isinstance(repositorio, RepositorioBase):
-            raise TypeError("repositorio debe implementar RepositorioBase")
-        # Dependencia inyectada por constructor
         self.__repositorio = repositorio
-    # Estudiantes 
+
+    # ESTUDIANTES
+
     def registrar_estudiante(self, estudiante):
         self.__repositorio.guardar_estudiante(estudiante)
 
@@ -26,7 +26,7 @@ class GestorUniversidad:
     def total_estudiantes(self):
         return self.__repositorio.total_estudiantes()
 
-    # Profesores 
+    # PROFESORES
 
     def registrar_profesor(self, profesor):
         self.__repositorio.guardar_profesor(profesor)
@@ -45,3 +45,4 @@ class GestorUniversidad:
 
     def total_profesores(self):
         return self.__repositorio.total_profesores()
+        

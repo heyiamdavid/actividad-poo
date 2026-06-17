@@ -1,4 +1,5 @@
 @echo off
-echo Iniciando servidor Backend en Python (FastAPI)...
-python -m uvicorn api:app --reload
+echo Iniciando servidor Backend en Python (FastAPI) usando Main.py...
+cd "poo clases"
+python Main.py
 pause

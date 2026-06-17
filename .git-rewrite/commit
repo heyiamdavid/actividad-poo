@@ -1,23 +1,23 @@
-tree 96402b859d611bc39a556fa9a7642bc11b579184
-parent 93063bdb8dc4888918bce266d2862e5ed246c0ac
-author jeidy_ver <verajeidy36@gmail.com> 1781645210 -0600
-committer GitHub <noreply@github.com> 1781645210 -0600
+tree 2cd54ff7c1796d2d41055d8c0ba06de79aac1d64
+parent 5c38590f65fdd31cdd09d6a0bbfe807fdabfe368
+author jeidy_ver <verajeidy36@gmail.com> 1781648816 -0600
+committer GitHub <noreply@github.com> 1781648816 -0600
 gpgsig -----BEGIN PGP SIGNATURE-----
  
- wsFcBAABCAAQBQJqMb+aCRC1aQ7uu5UhlAAAXDEQAIUEZAcdn6yB8V32fdAC8B5/
- XPgLw6x6HEc+vm/hAnnKMr18mcHKCQUv1m8QM8A6FyJG6pUpcK1YypqChLmo7wLl
- 5TpIzxrOnHj3tlpksYgIpGxqwmCCsdb7fnjlYIhjqBDmmoRDH2MBncS8+m5Y9u5t
- tIYGeaJ2Uyn8GnkMCH+BcSXhs+ubdssK57Sb49TOckT+wUOeeMXz2sic4Dljtb2J
- Mfrtj8n9lwzO3YnwcNeyCsbOTSIKkYpL5NvAJxsBT+RElS89bXRtYjeamSC3GHH8
- ELEUOwbdhulLmGcOqM9DOZp3wQOnn6GG14toaBC4GpFWYUzeA8Tw6J3GFglPRi6B
- +jjwVU7MYnwmg80s+GoljswwK1CDIWrJzWrYbht3w0cTb+tt4BbsGLCHOEAziCsR
- GrSLDPIv4oAOz14vjw/KILiBFmmshsWo+SAheQoz3zdt3SkaAOK8AN+uY3fhaJZ3
- 9SpEY7YdYQlfxpcnc4Ht8IH9HOe98P7Bx9YvSqC1AmhaNmh4/TfFl8cHqI4GBKvR
- HuX4Qk1Ycgnt+AZy6uN+DHFwQaVql4jNFobKR36o+NjTA400IabwZ6gazNhfZwlU
- YsNZo6h7dHjfF0qbLUYM9AT+u/XHD7LX4/85RYFG8RwZmOx2R8LdkMl4EMNyitXI
- wsSrx23a3WqAyZ08SYkN
- =yBfX
+ wsFcBAABCAAQBQJqMc2wCRC1aQ7uu5UhlAAAdvoQAJNs3N4dhLPvvRzDvzR/bEv7
+ nClANTwSvgDUcQcVAfomHSjpXoEyP8Jm9104HPviashtFiDHvY6aAxnIe6+Shb+l
+ sgmVqT5GIkYvpZGLJ6GT1xDaiU/CViXpSpBaq55tDs/sPK9yA19YXsK2M9rZ3fJw
+ s7oqSFa4dOQibg7qASoN6Dm9J4arJzAp7p4BuJVcetAWj7jntkZUHgpJ2N1ocF4Q
+ xV4p5f1feJMkc4FM8neNrsSRSlSkfdbEHcpBiODqwH6Z5dbkPX+EkYmKvsIoLIHC
+ DGYvAaymyKSgIsztNKA8xgQoxX+XgKN+a5QWSHo8AEPyG/B0wZpLVUKGTxRJ66sd
+ tOFsitOXYzMGV3SRx9tGYXLmux8yw5sDfkfuEz4eVHAqMmcuYDL3pWRtA0XUjMTU
+ OWo7x8c1qgBczrjvaqaf3CFl2eOlFtsapnAGj5CO5x6NJabzrzKVAoGjZVskdeoT
+ J0eP82nMMKHPZmgTx5+TYTHbCY1b5uRZ1qwhUFl+J9RnL7OgQBGqdyCaPnXY2myf
+ F9uVPpE4M0JEet/0mvh56mc0Ohl5TR3u9FJNgBqPlYF0D7XcyPwglQWcLl0SApbD
+ J/8ZpPPT95r3QmlSVyVTMGIJY4nELxjDfkf/Tft1uK4kDfvbTCmtxWDkwsl6TPwW
+ jmAFTlj5ph0Bq8wLi2+9
+ =xhi9
  -----END PGP SIGNATURE-----
  
 
-Update Main.py
+comentar clase Estudiante.py

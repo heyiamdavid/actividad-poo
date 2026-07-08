@@ -76,7 +76,7 @@ class Administrador:
         facultades_existian = bool(self.__repositorio.listar_facultades())
         carreras_existian = bool(self.__repositorio.listar_carreras())
 
-        for facultad, carreras in DatosPredefinidos.facultades_predefinidas():
+        for facultad, carreras in DatosPredefinidos.facultades_predefinidas(): #Se hacen uso de las facultades predefinidas
 
             for carrera in carreras:
                 facultad.agregar_carrera(carrera)
@@ -248,7 +248,7 @@ class Administrador:
     @property
     def universidad(self) -> Optional[Universidad]:
         return self.__universidad
-
+    #Muestra los datos de la universidad con el metodo mostrar_universidad
     def mostrar_universidad(self) -> None:
         self.__universidad.mostrar_universidad()
 

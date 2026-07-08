@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
-from RepositorioSupabase import RepositorioSupabase
+from RepositorioSQLite import RepositorioSQLite
 
-app = FastAPI(title="Sistema Universitario con Supabase", version="2.0.0")
+app = FastAPI(title="Sistema Universitario con SQLite", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,7 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-repo_supabase = RepositorioSupabase()
+repo_sqlite = RepositorioSQLite()
 
 class LoginRequest(BaseModel):
     identificacion: str
@@ -23,34 +23,51 @@ class LoginRequest(BaseModel):
 
 @app.get("/")
 def root():
-    return {"message": "API del Sistema Universitario conectada a Supabase"}
+    return {"message": "API del Sistema Universitario conectada a SQLite"}
 
 @app.post("/api/login")
 def login(request: LoginRequest):
-    # En Supabase la contraseña idealmente debería estar hasheada.
-    # Por simplicidad ahora lo validamos directo.
-    usuario = repo_supabase.validar_login(request.identificacion, request.contrasena)
-    if usuario:
-        # usuario es un dict devuelto por Supabase
+    # Verificar si es el administrador (credenciales de Administrador.py)
+    if request.identificacion == "12346776" and request.contrasena == "Sigma67":
         return {
             "status": "success",
             "data": {
-                "id": usuario.get("id"),
-                "nombre": usuario.get("nombre"),
-                "rol": usuario.get("rol")
+                "id": 0,
+                "nombre": "Administrador",
+                "rol": "admin"
+            }
+        }
+    
+
+    # Si no es admin, intentar como estudiante
+    usuario = repo_sqlite.validar_login_estudiante(request.identificacion, request.contrasena)
+    rol = "estudiante"
+    
+    if not usuario:
+        usuario = repo_sqlite.validar_login_profesor(request.identificacion, request.contrasena)
+        rol = "profesor"
+
+    if usuario:
+        # usuario es una tupla en SQLite: (id, nombre, telefono, email, identificacion, contrasena, ...)
+        return {
+            "status": "success",
+            "data": {
+                "id": usuario[0],
+                "nombre": usuario[1],
+                "rol": rol
             }
         }
     raise HTTPException(status_code=401, detail="Credenciales incorrectas")
 
 @app.get("/api/admin/estadisticas")
 def estadisticas_admin():
-    total_estudiantes = repo_supabase.total_estudiantes()
-    total_profesores = repo_supabase.total_profesores()
+    total_estudiantes = repo_sqlite.total_estudiantes()
+    total_profesores = repo_sqlite.total_profesores()
     return {
         "status": "success",
         "data": {
             "total_estudiantes": total_estudiantes,
             "total_profesores": total_profesores,
-            "total_cursos": 0 # TODO: Implementar conteo de cursos en Supabase
+            "total_cursos": 0 # TODO: Implementar conteo de cursos en SQLite
         }
     }

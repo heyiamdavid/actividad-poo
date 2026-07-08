@@ -46,7 +46,7 @@ export default function Login() {
       <div className="glass login-card animate-fade-in">
         <div className="login-header">
           <h1>Sig<span>Ma</span></h1>
-          <p>Sistema Universitario Integral</p>
+          <p>Sistema Integral de Gestion de Matriculas Academicas</p>
         </div>
         
         <form onSubmit={handleLogin}>
@@ -57,7 +57,7 @@ export default function Login() {
             <input 
               type="text" 
               className="form-input" 
-              placeholder="Ej. 0000000000"
+              placeholder="Ej. 0123456789"
               value={id}
               onChange={(e) => setId(e.target.value)}
               required 
@@ -65,7 +65,7 @@ export default function Login() {
           </div>
           
           <div className="form-group">
-            <label>Contrasena</label>
+            <label>Contraseña</label>
             <div style={{ position: 'relative' }}>
               <input 
                 type={showPassword ? 'text' : 'password'}

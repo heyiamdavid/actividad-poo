@@ -1,5 +1,5 @@
 class Facultad:
-
+# Constructor de la clase Facultad
     def __init__(self,
                  id_facultad,
                  nombreFacultad,
@@ -18,7 +18,7 @@ class Facultad:
     @property
     def carreras(self):
         return self.__carreras
-
+# Getter para acceder a la lista privada de cupos
     @property
     def cupos(self):
         return self.__cupos

@@ -63,7 +63,7 @@ class Sede:
             print(f"- {facultad.nombreFacultad}")
 
     def mostrar_sede(self) -> None:
-
+        #Se imprimen los datos de la sede
         print("\n========== SEDE ==========")
         print(f"Nombre: {self.nombreSede}")
         print(f"Dirección: {self.direccion}")

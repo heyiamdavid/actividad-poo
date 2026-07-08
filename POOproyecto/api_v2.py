@@ -7,8 +7,11 @@ from datetime import datetime
 from RepositorioSQLite import RepositorioSQLite
 from Administrador import Administrador
 
+# Instancia principal de la aplicacion FastAPI
 app = FastAPI(title="Sistema Universitario API (POOproyecto)", version="2.0.0")
 
+# Configuracion de CORS para que el frontend en React pueda consumir la API
+# sin restricciones de origen durante el desarrollo
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,27 +20,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Inicializamos el repositorio y administrador igual que en Main.py
+# Se crea la conexion con la base de datos SQLite y se inicializa el administrador
+# que contiene toda la logica de negocio del sistema universitario
 repositorio = RepositorioSQLite("universidad.db")
 administrador = Administrador(repositorio)
 
 
+# ====================================================================
+# MODELOS DE DATOS (Pydantic)
+# Definen la estructura y validacion de los cuerpos de las peticiones
+# ====================================================================
+
+# Datos necesarios para matricular uno o varios cursos a un estudiante
 class MatricularRequest(BaseModel):
     identificacion_estudiante: str
     codigos_curso: List[str]
 
+# Identifica al estudiante y el curso que se quiere cerrar para calcular su nota final
 class CerrarCursoRequest(BaseModel):
     identificacion_estudiante: str
     codigo_curso: str
 
+# Campos editables del perfil de un profesor
 class ProfesorUpdate(BaseModel):
     telefono: str
     email: str
 
+# Credenciales enviadas desde el formulario de inicio de sesion
 class LoginRequest(BaseModel):
     identificacion: str
     contrasena: str
 
+# Datos requeridos para registrar un nuevo profesor en el sistema
 class ProfesorCreate(BaseModel):
     nombre: str
     telefono: str
@@ -46,6 +60,7 @@ class ProfesorCreate(BaseModel):
     contrasena: str
     titulo: str
 
+# Datos requeridos para crear un nuevo curso con su horario y aula asignada
 class CursoCreate(BaseModel):
     codigo_carrera: str
     codigo_curso: str
@@ -58,12 +73,14 @@ class CursoCreate(BaseModel):
     numero_aula: str
     capacidad_aula: int
 
+# Informacion necesaria para registrar una evaluacion a un estudiante en un curso
 class NotaCreate(BaseModel):
     identificacion_estudiante: str
     codigo_curso: str
     nombre_evaluacion: str
     calificacion: float
 
+# Datos completos para registrar un estudiante nuevo en el sistema
 class EstudianteCreate(BaseModel):
     nombre: str
     telefono: str
@@ -77,6 +94,7 @@ class EstudianteCreate(BaseModel):
     codigo_carrera: str
     semestre: Optional[int] = None
 
+# Campos para el flujo de cambio de contrasena obligatorio al primer inicio de sesion
 class CambioClaveRequest(BaseModel):
     identificacion: str
     contrasena_actual: str
@@ -84,13 +102,22 @@ class CambioClaveRequest(BaseModel):
     confirmacion_nueva: str
     rol: str
 
+# Endpoint de verificacion para confirmar que la API esta en linea
 @app.get("/")
 def root():
     return {"message": "API del Sistema Universitario conectada a SQLite en POOproyecto"}
 
+# ====================================================================
+# AUTENTICACION
+# ====================================================================
+
+# Valida las credenciales contra los tres roles posibles del sistema.
+# El orden importa: primero admin, luego profesor, luego estudiante.
+# Si la contrasena coincide con la clave temporal, se indica al frontend
+# que debe forzar el cambio de contrasena antes de continuar.
 @app.post("/api/login")
 def login(request: LoginRequest):
-    # Intentar como administrador primero
+    # Verificar si las credenciales corresponden al administrador del sistema
     if administrador.autenticar_administrador(request.identificacion, request.contrasena):
         return {
             "status": "success",
@@ -100,8 +127,8 @@ def login(request: LoginRequest):
                 "rol": "admin"
             }
         }
-    
-    # Intentar como profesor
+
+    # Verificar si corresponden a un profesor registrado
     profesor = administrador.autenticar_profesor(request.identificacion, request.contrasena)
     if profesor:
         return {
@@ -113,8 +140,8 @@ def login(request: LoginRequest):
                 "requiere_cambio_clave": profesor.contrasena == profesor.clave_temporal
             }
         }
-        
-    # Intentar como estudiante
+
+    # Verificar si corresponden a un estudiante registrado
     estudiante = administrador.autenticar_estudiante(request.identificacion, request.contrasena)
     if estudiante:
         return {
@@ -127,7 +154,7 @@ def login(request: LoginRequest):
                 "requiere_cambio_clave": estudiante.contrasena == estudiante.clave_temporal
             }
         }
-        
+
     raise HTTPException(status_code=401, detail="Credenciales incorrectas")
 
 @app.post("/api/cambiar_clave")
@@ -155,21 +182,24 @@ def cambiar_clave(request: CambioClaveRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+# ====================================================================
+# RUTAS DE ADMINISTRADOR
+# ====================================================================
+
+# Retorna contadores generales para mostrar en el panel de control del admin
 @app.get("/api/admin/estadisticas")
 def estadisticas_admin():
     total_estudiantes = administrador.total_estudiantes()
-    # Supongamos que hay total_profesores en administrador (hay que verificar)
-    # total_profesores = administrador.total_profesores() 
-    # Por ahora hardcodeamos total_profesores si no existe, o lo implementamos.
-    # Vamos a usar el repositorio directamente para evitar tocar Administrador si falta el metodo
+    # Se consulta el repositorio directamente para el conteo de profesores
+    # ya que el metodo puede no estar expuesto en el Administrador
     total_prof = repositorio.total_profesores() if hasattr(repositorio, 'total_profesores') else 0
-    
+
     return {
         "status": "success",
         "data": {
             "total_estudiantes": total_estudiantes,
             "total_profesores": total_prof,
-            "total_cursos": 0 # TODO
+            "total_cursos": 0
         }
     }
 
@@ -275,6 +305,12 @@ def crear_curso(c: CursoCreate):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+# ====================================================================
+# RUTAS DE PROFESOR
+# ====================================================================
+
+# Devuelve todos los cursos asignados a un profesor con detalle completo:
+# horarios, aulas, lista de estudiantes y las evaluaciones ya registradas por cada uno
 @app.get("/api/profesor/{identificacion}/cursos")
 def cursos_de_profesor(identificacion: str):
     cursos = administrador.cursos_de_profesor(identificacion)
@@ -352,7 +388,12 @@ def notas_de_estudiante(identificacion: str):
     }
 
 
-# ====== RUTAS ESTUDIANTE ======
+# Registra una evaluacion (parcial, examen final, etc.) para un estudiante en un curso especifico
+# La logica de validacion se delega al objeto Administrador
+
+# ====================================================================
+# RUTAS DE ESTUDIANTE
+# ====================================================================
 @app.get("/api/estudiante/{identificacion}/cursos_disponibles")
 def cursos_disponibles_estudiante(identificacion: str):
     estudiante = administrador.buscar_estudiante(identificacion)
@@ -389,7 +430,8 @@ def matricular_estudiante(request: MatricularRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# ====== RUTAS PROFESOR ======
+# Devuelve la lista de estudiantes matriculados en un curso concreto.
+# Util para que el profesor consulte quien esta en su clase.
 @app.get("/api/profesor/curso/{codigo_curso}/estudiantes")
 def estudiantes_del_curso(codigo_curso: str):
     curso = administrador.buscar_curso(codigo_curso)
@@ -407,6 +449,8 @@ def estudiantes_del_curso(codigo_curso: str):
         ]
     }
 
+# Cierra el curso de un estudiante: calcula el promedio de sus notas,
+# determina si aprobo o reprobo y actualiza su estado en el sistema
 @app.post("/api/profesor/cerrar_curso")
 def cerrar_curso(request: CerrarCursoRequest):
     try:
@@ -437,8 +481,11 @@ def actualizar_profesor(identificacion: str, datos: ProfesorUpdate):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-# --- ENDPOINTS AÑADIDOS MASIVAMENTE PARA COMPLETAR EL PLAN ---
+# ====================================================================
+# GESTION DE USUARIOS (edicion y eliminacion)
+# ====================================================================
 
+# Campos que el administrador puede modificar de un estudiante existente
 class EstudianteEditRequest(BaseModel):
     nombre: str
     telefono: str
@@ -493,6 +540,12 @@ def eliminar_profesor(identificacion: str):
     administrador.eliminar_profesor(identificacion)
     return {"status": "success", "message": "Profesor eliminado correctamente"}
 
+# ====================================================================
+# GESTION DE LA ESTRUCTURA UNIVERSITARIA
+# Sedes, Facultades, Carreras
+# ====================================================================
+
+# Retorna todas las sedes registradas en la universidad
 @app.get("/api/admin/sedes")
 def listar_sedes():
     sedes = administrador.listar_sedes()
@@ -560,6 +613,12 @@ class CambioClaveRequest(BaseModel):
     contrasena_actual: str
     nueva_contrasena: str
     confirmacion: str
+
+# ====================================================================
+# CAMBIO DE CONTRASENA POR USUARIO
+# Estos endpoints son distintos al cambio forzado del primer inicio de sesion.
+# Permiten que el propio usuario actualice su clave en cualquier momento.
+# ====================================================================
 
 @app.post("/api/estudiante/{identificacion}/cambiar_contrasena")
 def cambiar_clave_estudiante(identificacion: str, request: CambioClaveRequest):

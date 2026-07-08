@@ -4,6 +4,8 @@ import { User, Library, Award, LogOut, Eye, EyeOff, BookPlus, ShieldAlert, Calen
 
 export default function DashboardEstudiante() {
   const [activeTab, setActiveTab] = useState('datos');
+  
+  // Obtenemos la sesion del estudiante guardada en localStorage
   const [user] = useState(() => {
     const stored = localStorage.getItem('user');
     if (!stored) return null;
@@ -12,15 +14,18 @@ export default function DashboardEstudiante() {
   });
   const navigate = useNavigate();
 
+  // Estados para almacenar datos consultados desde la API
   const [cursos, setCursos] = useState([]);
   const [notas, setNotas] = useState([]);
   const [loadingCursos, setLoadingCursos] = useState(false);
   const [loadingNotas, setLoadingNotas] = useState(false);
   
+  // Estados para el formulario de cambio de contrasena
   const [claveForm, setClaveForm] = useState({ actual: '', nueva: '', confirmacion: '' });
   const [cambiandoClave, setCambiandoClave] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Estados y control del proceso de matriculacion
   const [cursosDisponibles, setCursosDisponibles] = useState([]);
   const [loadingDisponibles, setLoadingDisponibles] = useState(false);
   const [selectedCursos, setSelectedCursos] = useState([]);
@@ -32,6 +37,7 @@ export default function DashboardEstudiante() {
     }
   }, [user, navigate]);
 
+  // Obtiene los cursos en los que el estudiante esta matriculado actualmente
   const fetchCursos = useCallback(async () => {
     if (!user) return;
     setLoadingCursos(true);
@@ -46,6 +52,7 @@ export default function DashboardEstudiante() {
     }
   }, [user]);
 
+  // Obtiene todas las calificaciones del estudiante
   const fetchNotas = useCallback(async () => {
     if (!user) return;
     setLoadingNotas(true);
@@ -80,6 +87,7 @@ export default function DashboardEstudiante() {
     }
   }, [user]);
 
+  // Envia al backend la solicitud de matriculacion para los cursos seleccionados
   const handleMatricular = async () => {
     if (selectedCursos.length === 0) {
       alert("Selecciona al menos un curso");
@@ -98,13 +106,15 @@ export default function DashboardEstudiante() {
       if (res.ok && data.status === 'success') {
         alert("Matrícula exitosa");
         setSelectedCursos([]);
-        setActiveTab('cursos');
+        // Recargamos las listas de matriculados vs disponibles para reflejar los cambios
+        fetchCursos();
+        fetchCursosDisponibles();
       } else {
-        alert(data.detail || "Error en matrícula");
+        alert(data.detail || "Error al matricular");
       }
     } catch (error) {
       console.error(error);
-      alert("Error de red al matricular");
+      alert("Error de red");
     }
   };
 

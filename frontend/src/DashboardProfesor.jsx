@@ -4,6 +4,8 @@ import { User, PenTool, BookOpen, LogOut, GraduationCap, Eye, EyeOff, ShieldAler
 
 export default function DashboardProfesor() {
   const [activeTab, setActiveTab] = useState('datos');
+  
+  // Recuperamos la sesion desde el localStorage y verificamos que el rol coincida
   const [user] = useState(() => {
     const stored = localStorage.getItem('user');
     if (!stored) return null;
@@ -16,6 +18,7 @@ export default function DashboardProfesor() {
   const [loading, setLoading] = useState(false);
   const [cursosExpandidos, setCursosExpandidos] = useState({});
 
+  // Formularios para las diferentes operaciones del dashboard
   const [notaForm, setNotaForm] = useState({ identificacion_estudiante: '', codigo_curso: '', nombre_evaluacion: 'Parcial 1', calificacion: '' });
   const [claveForm, setClaveForm] = useState({ actual: '', nueva: '', confirmacion: '' });
   const [cambiandoClave, setCambiandoClave] = useState(false);
@@ -24,6 +27,7 @@ export default function DashboardProfesor() {
   const [editandoDatos, setEditandoDatos] = useState(false);
   const [datosForm, setDatosForm] = useState({ telefono: user?.telefono || '', email: user?.email || '' });
 
+  // Maneja la actualizacion del perfil del profesor en el backend
   const handleUpdateDatos = async (e) => {
     e.preventDefault();
     try {
@@ -47,16 +51,19 @@ export default function DashboardProfesor() {
     if (!user) return;
     setLoading(true);
     try {
+      // Obtenemos los cursos asignados al profesor junto con los alumnos inscritos
       const res = await fetch(`http://localhost:8000/api/profesor/${user.id}/cursos`);
       const data = await res.json();
       if (res.ok && data.status === 'success') setCursos(data.data);
     } catch (e) { console.error(e); } finally { setLoading(false); }
   }, [user]);
 
+  // Redireccion si no hay sesion activa
   useEffect(() => {
     if (!user) { navigate('/login'); }
   }, [user, navigate]);
 
+  // Carga inicial de datos cuando cambiamos a pestañas que lo requieren
   useEffect(() => {
     if (!user) return;
     const timeout = setTimeout(() => {
@@ -74,6 +81,7 @@ export default function DashboardProfesor() {
     setCursosExpandidos(prev => ({ ...prev, [codigo]: !prev[codigo] }));
   };
 
+  // Envia una calificacion al backend y refresca la lista de cursos
   async function handleRegistrarNota(e) {
     e.preventDefault();
     try {
@@ -93,6 +101,7 @@ export default function DashboardProfesor() {
     } catch (err) { console.error(err); alert('Error de red'); }
   }
 
+  // Calcula el promedio final de un estudiante y determina si aprobo
   const handleCerrarCurso = async (idEstudiante, codigoCurso, nombreEstudiante) => {
     if (!window.confirm(`\u00bfCerrar el curso para ${nombreEstudiante}? Se calcular\u00e1 el promedio final.`)) return;
     try {
@@ -116,6 +125,8 @@ export default function DashboardProfesor() {
     } catch (e) { console.error(e); alert('Error de red'); }
   };
 
+  // Procesa el formulario de cambio de contrasena.
+  // Tiene en cuenta si es un cambio obligatorio (requiere_cambio_clave) o manual.
   async function handleCambioClave(e) {
     e.preventDefault();
     if (claveForm.nueva !== claveForm.confirmacion) { alert('Las contrase\u00f1as nuevas no coinciden.'); return; }

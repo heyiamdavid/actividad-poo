@@ -5,6 +5,7 @@ import { Users, GraduationCap, BookOpen, BookText, LogOut, UserPlus, Plus, Build
 export default function DashboardAdmin() {
   const [activeTab, setActiveTab] = useState('estudiantes');
   
+  // Listas de datos cacheadas desde el backend
   const [estudiantes, setEstudiantes] = useState([]);
   const [profesores, setProfesores] = useState([]);
   const [carreras, setCarreras] = useState([]);
@@ -12,9 +13,11 @@ export default function DashboardAdmin() {
   const [sedes, setSedes] = useState([]);
   const [facultades, setFacultades] = useState([]);
   
+  // Manejo de carga e informacion general
   const [stats, setStats] = useState({ total_estudiantes: '--', total_profesores: '--' });
   const [loading, setLoading] = useState(false);
   
+  // Controlan la visibilidad de los formularios modales (creacion y edicion)
   const [showProfForm, setShowProfForm] = useState(false);
   const [showCursoForm, setShowCursoForm] = useState(false);
   const [showEstForm, setShowEstForm] = useState(false);
@@ -23,6 +26,7 @@ export default function DashboardAdmin() {
   const [showCarForm, setShowCarForm] = useState(false);
   const [showAsignarForm, setShowAsignarForm] = useState(false);
   
+  // Contienen los objetos completos cuando el usuario hace click en "Editar" en una tabla
   const [editingEstudiante, setEditingEstudiante] = useState(null);
   const [editingProfesor, setEditingProfesor] = useState(null);
 
@@ -40,6 +44,7 @@ export default function DashboardAdmin() {
 
   const navigate = useNavigate();
 
+  // Genera contrasenas aleatorias de 6 caracteres para los usuarios recien creados
   function generarClave() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
@@ -50,6 +55,7 @@ export default function DashboardAdmin() {
     navigate('/login');
   };
 
+  // Actualiza los datos especificos de la pestaña cuando el usuario navega entre ellas
   useEffect(() => {
     fetchStats();
     if (activeTab === 'estudiantes') { fetchEstudiantes(); fetchCarreras(); }
@@ -123,6 +129,7 @@ export default function DashboardAdmin() {
   }
 
   // --- HANDLERS ESTUDIANTES ---
+  // Maneja tanto la creacion de un estudiante nuevo como la edicion de uno existente
   async function handleCreateEstudiante(e) {
     e.preventDefault();
     if (editingEstudiante) {
@@ -173,6 +180,7 @@ export default function DashboardAdmin() {
     }
   }
 
+  // Elimina un estudiante pidiendo confirmacion previa
   async function handleDeleteEstudiante(identificacion) {
     if (!window.confirm('¿Seguro que deseas eliminar este estudiante?')) return;
     try {
@@ -183,6 +191,7 @@ export default function DashboardAdmin() {
   }
 
   // --- HANDLERS PROFESORES ---
+  // Crea o edita un registro de profesor dependiendo de si 'editingProfesor' tiene datos
   async function handleCreateProfesor(e) {
     e.preventDefault();
     if (editingProfesor) {
@@ -224,6 +233,7 @@ export default function DashboardAdmin() {
     }
   }
 
+  // Elimina un profesor del sistema
   async function handleDeleteProfesor(identificacion) {
     if (!window.confirm('¿Seguro que deseas eliminar este profesor?')) return;
     try {
@@ -233,7 +243,8 @@ export default function DashboardAdmin() {
     } catch(e) { console.error(e); }
   }
 
-  // --- HANDLERS UNIVERSIDAD ---
+  // --- HANDLERS ESTRUCTURA UNIVERSITARIA ---
+  // Registra una nueva sede fisica de la universidad
   async function handleCreateSede(e) {
     e.preventDefault();
     try {

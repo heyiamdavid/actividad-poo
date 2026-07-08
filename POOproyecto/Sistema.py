@@ -9,7 +9,7 @@ class Sistema:
 
     def __init__(self, administrador: Administrador):
         self.administrador: Administrador = administrador
-
+    #Se validan los datos/credenciales para poder acceder al sistema 
     def acceder_administrador(self) -> None:
 
         print("\n========== LOGIN ADMINISTRADOR ==========\n")

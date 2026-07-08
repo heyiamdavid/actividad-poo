@@ -4,6 +4,6 @@ from Sistema import Sistema
 
 if __name__ == "__main__":
     repositorio = RepositorioSQLite("universidad.db")
-    administrador = Administrador(repositorio)
-    app = Sistema(administrador)
+    administrador = Administrador(repositorio) #inyección de dependencias
+    app = Sistema(administrador) #Inyección de dependencias
     app.iniciar()

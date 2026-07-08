@@ -15,7 +15,7 @@ class Aula:
         if nueva_capacidad > 0:
             self.__capacidad = nueva_capacidad
         else:
-            print("Capacidad inválida")
+            print("Capacidad inválida. Ingrese un numero mayor a 0")
 
     # MÉTODOS
     def mostrar_aula(self):

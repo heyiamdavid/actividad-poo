@@ -284,10 +284,21 @@ def cursos_de_profesor(identificacion: str):
             {
                 "codigo": c.codigoCurso,
                 "nombre": c.nombreCurso,
+                "creditos": c.creditos,
+                "semestre": c.semestre,
+                "horarios": [{"dia": h.dia, "hora_inicio": h.hora_inicio, "hora_fin": h.hora_fin} for h in c.horarios],
+                "aulas": [{"numero": a.numero, "capacidad": a.capacidad} for a in c.aulas],
                 "estudiantes": [
                     {
                         "identificacion": e.identificacion,
-                        "nombre": e.nombre
+                        "nombre": e.nombre,
+                        "email": e.email,
+                        "evaluaciones": [
+                            {
+                                "nombre": ev.nombreEvaluacion,
+                                "calificacion": ev.calificacion
+                            } for ev in c.obtener_boleta(e.identificacion).evaluaciones
+                        ]
                     } for e in c.estudiantes
                 ]
             } for c in cursos
@@ -319,7 +330,9 @@ def cursos_de_estudiante(identificacion: str):
                 "codigo": c.codigoCurso,
                 "nombre": c.nombreCurso,
                 "semestre": c.semestre,
-                "creditos": c.creditos
+                "creditos": c.creditos,
+                "horarios": [{"dia": h.dia, "hora_inicio": h.horaInicio, "hora_fin": h.horaFin} for h in c.horarios],
+                "aulas": [{"numero": a.numero, "capacidad": a.capacidad} for a in c.aulas]
             } for c in matricula.cursos
         ]
     }
@@ -420,5 +433,154 @@ def actualizar_profesor(identificacion: str, datos: ProfesorUpdate):
             
         administrador.actualizar_datos_profesor(profesor)
         return {"status": "success", "message": "Datos actualizados correctamente"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# --- ENDPOINTS AÑADIDOS MASIVAMENTE PARA COMPLETAR EL PLAN ---
+
+class EstudianteEditRequest(BaseModel):
+    nombre: str
+    telefono: str
+    email: str
+    estado: str
+    modalidad: str
+    semestre: int
+
+@app.put("/api/admin/estudiantes/{identificacion}")
+def editar_estudiante(identificacion: str, request: EstudianteEditRequest):
+    estudiante = administrador.buscar_estudiante(identificacion)
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+    
+    estudiante.nombre = request.nombre
+    estudiante.telefono = request.telefono
+    estudiante.email = request.email
+    estudiante.estado = request.estado
+    estudiante.modalidad = request.modalidad
+    estudiante.semestre = request.semestre
+    
+    administrador.actualizar_datos_estudiante(estudiante)
+    return {"status": "success", "message": "Estudiante actualizado correctamente"}
+
+@app.delete("/api/admin/estudiantes/{identificacion}")
+def eliminar_estudiante(identificacion: str):
+    administrador.eliminar_estudiante(identificacion)
+    return {"status": "success", "message": "Estudiante eliminado correctamente"}
+
+class ProfesorEditRequest(BaseModel):
+    nombre: str
+    telefono: str
+    email: str
+    titulo: str
+
+@app.put("/api/admin/profesores/{identificacion}")
+def editar_profesor(identificacion: str, request: ProfesorEditRequest):
+    profesor = administrador.buscar_profesor(identificacion)
+    if not profesor:
+        raise HTTPException(status_code=404, detail="Profesor no encontrado")
+    
+    profesor.nombre = request.nombre
+    profesor.telefono = request.telefono
+    profesor.email = request.email
+    profesor.titulo = request.titulo
+    
+    administrador.actualizar_datos_profesor(profesor)
+    return {"status": "success", "message": "Profesor actualizado correctamente"}
+
+@app.delete("/api/admin/profesores/{identificacion}")
+def eliminar_profesor(identificacion: str):
+    administrador.eliminar_profesor(identificacion)
+    return {"status": "success", "message": "Profesor eliminado correctamente"}
+
+@app.get("/api/admin/sedes")
+def listar_sedes():
+    sedes = administrador.listar_sedes()
+    return {"status": "success", "data": [{"nombre_sede": s.nombreSede, "direccion": s.direccion, "ciudad": s.ciudad} for s in sedes]}
+
+class SedeCreateRequest(BaseModel):
+    nombre_sede: str
+    direccion: str
+    ciudad: str
+
+@app.post("/api/admin/sedes")
+def crear_sede(request: SedeCreateRequest):
+    sede = administrador.agregar_sede(request.nombre_sede, request.direccion, request.ciudad)
+    if not sede:
+        raise HTTPException(status_code=400, detail="Error al crear sede (quizás ya existe)")
+    return {"status": "success", "message": "Sede creada"}
+
+@app.get("/api/admin/facultades")
+def listar_facultades():
+    # Iteramos por sede para poder incluir el nombre de la sede en cada facultad
+    result = []
+    for sede in administrador.listar_sedes():
+        for f in sede.facultades:
+            result.append({"id": f.id_facultad, "nombre": f.nombreFacultad, "sede": sede.nombreSede})
+    return {"status": "success", "data": result}
+
+class FacultadCreateRequest(BaseModel):
+    nombre_sede: str
+    id_facultad: int
+    nombre_facultad: str
+
+@app.post("/api/admin/facultades")
+def crear_facultad(request: FacultadCreateRequest):
+    # 'ubicacion' usa el nombre de la sede como referencia de ubicación por defecto
+    fac = administrador.agregar_facultad(request.nombre_sede, request.id_facultad, request.nombre_facultad, request.nombre_sede)
+    if not fac:
+        raise HTTPException(status_code=400, detail="Error al crear facultad (revise la sede o ID)")
+    return {"status": "success", "message": "Facultad creada"}
+
+class CarreraCreateRequest(BaseModel):
+    id_facultad: int
+    codigo_carrera: str
+    nombre_carrera: str
+    modalidad: str
+
+@app.post("/api/admin/carreras")
+def crear_carrera(request: CarreraCreateRequest):
+    car = administrador.agregar_carrera(request.id_facultad, request.codigo_carrera, request.nombre_carrera, request.modalidad)
+    if not car:
+        raise HTTPException(status_code=400, detail="Error al crear carrera (revise la facultad o código)")
+    return {"status": "success", "message": "Carrera creada"}
+
+class AsignarCursoRequest(BaseModel):
+    identificacion_profesor: str
+    codigo_curso: str
+
+@app.post("/api/admin/asignar_curso")
+def asignar_curso(request: AsignarCursoRequest):
+    res = administrador.asignar_curso_a_profesor(request.identificacion_profesor, request.codigo_curso)
+    if not res:
+        raise HTTPException(status_code=400, detail="No se pudo asignar el curso. Verifique si el profesor o curso existen.")
+    return {"status": "success", "message": "Curso asignado exitosamente"}
+
+class CambioClaveRequest(BaseModel):
+    contrasena_actual: str
+    nueva_contrasena: str
+    confirmacion: str
+
+@app.post("/api/estudiante/{identificacion}/cambiar_contrasena")
+def cambiar_clave_estudiante(identificacion: str, request: CambioClaveRequest):
+    estudiante = administrador.buscar_estudiante(identificacion)
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+    
+    try:
+        administrador.cambiar_contrasena_estudiante(estudiante, request.contrasena_actual, request.nueva_contrasena, request.confirmacion)
+        return {"status": "success", "message": "Contraseña actualizada"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/profesor/{identificacion}/cambiar_contrasena")
+def cambiar_clave_profesor(identificacion: str, request: CambioClaveRequest):
+    profesor = administrador.buscar_profesor(identificacion)
+    if not profesor:
+        raise HTTPException(status_code=404, detail="Profesor no encontrado")
+    
+    try:
+        administrador.cambiar_contrasena_profesor(profesor, request.contrasena_actual, request.nueva_contrasena, request.confirmacion)
+        return {"status": "success", "message": "Contraseña actualizada"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

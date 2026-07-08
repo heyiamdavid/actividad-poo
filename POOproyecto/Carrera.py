@@ -54,7 +54,7 @@ class Carrera:
     def agregar_curso(self, curso: "Curso") -> bool:
 
         if self.buscar_curso(curso.codigoCurso):
-            print(f"Ya existe un curso con el código {curso.codigoCurso}")
+            print(f"Ya hay un curso existente con el código {curso.codigoCurso}")
             return False
 
         for curso_existente in self.__cursos:

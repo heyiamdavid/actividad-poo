@@ -36,7 +36,7 @@ class BoletaNotas:
         evaluacion = self.__evaluaciones.get(nombre_evaluacion)
 
         if evaluacion is None:
-            print(f"\nNo existe la evaluación {nombre_evaluacion}.")
+            print(f"\nNo existe la evaluación con nombre {nombre_evaluacion}.")
             return False
 
         evaluacion.calificacion = calificacion
@@ -88,6 +88,6 @@ class BoletaNotas:
         promedio = self.calcular_promedio()
 
         if promedio is None:
-            print("Promedio: pendiente (faltan evaluaciones regulares)")
+            print("Promedio: pendiente (faltan evaluaciones regulares para calcular un promedio)")
         else:
             print(f"Promedio: {promedio:.2f}")

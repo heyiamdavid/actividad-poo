@@ -125,12 +125,11 @@ class Curso:
 
     def choca_con(self, otro_curso: "Curso") -> bool:
 
-        # Dos cursos distintos no pueden compartir la misma aula
-        # en el mismo horario. Cursos iguales (mismo código) no
-        # se consideran choque entre sí.
         if self.codigoCurso == otro_curso.codigoCurso:
             return False
-
+# Dos cursos no relacionados no pueden compartir la misma aula en el mismo horario de clases. 
+        # Cursos iguales (mismo código) no se consideran choque entre sí.
+        
         for horario in self.__horarios:
             for aula in self.__aulas:
                 for otro_horario in otro_curso.horarios:

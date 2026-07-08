@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, List, Optional
-
+# Importación condicional para evitar errores de importación circular.
+# Solo se ejecuta durante la fase de análisis de tipos estáticos, no en tiempo de ejecución.
 if TYPE_CHECKING:
     from Sede import Sede
 
@@ -16,6 +17,7 @@ class Universidad:
         self.direccion: str = direccion
 
         # Composición
+        # Se declara como lista privada (__) para proteger su integridad desde el inicio.
         self.__sedes: List["Sede"] = []
 
     # ENCAPSULAMIENTO

@@ -7,8 +7,8 @@ class Evaluacion:
     # tres son obligatorias para calcular el promedio; la cuarta
     # (Recuperación) es opcional y, si existe, sustituye a las tres
     # primeras en el cálculo del promedio final.
-    PRIMER_PARCIAL: str = "1er Parcial"
-    SEGUNDO_PARCIAL: str = "2do Parcial"
+    PRIMER_PARCIAL: str = "1er Parcial" #parciales predefinidos segun la universidad
+    SEGUNDO_PARCIAL: str = "2do Parcial" #parciales predefinidos segun la universidad
     EXAMEN_FINAL: str = "Examen Final"
     RECUPERACION: str = "Recuperación"
 

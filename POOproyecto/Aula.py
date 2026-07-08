@@ -14,8 +14,9 @@ class Aula:
     def capacidad(self, nueva_capacidad: int) -> None:
         if nueva_capacidad > 0:
             self.__capacidad = nueva_capacidad
+       #si se ingresa una cantidad invalida dará un error y se pedirá ingresar nuevamente
         else:
-            print("Capacidad inválida")
+            print("Capacidad inválida, ingrese un rango válido")
 
     def es_la_misma(self, otra_aula: "Aula") -> bool:
 

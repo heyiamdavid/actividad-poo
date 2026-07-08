@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class Carrera:
-
+# Constructor principal, inicializa los datos básicos cuando creamos una nueva Carrera
     def __init__(self,
                  codigoCarrera: str,
                  nombreCarrera: str,
@@ -50,7 +50,7 @@ class Carrera:
     @property
     def cursos(self) -> List["Curso"]:
         return self.__cursos
-
+# Función para meter un nuevo curso a la malla de la carrera
     def agregar_curso(self, curso: "Curso") -> bool:
 
         if self.buscar_curso(curso.codigoCurso):

@@ -11,7 +11,7 @@ class FabricaPersona(ABC):
         pass
 
 
-class FabricaEstudiante(FabricaPersona):
+class FabricaEstudiante(FabricaPersona): #clase fabrica estudiante hereda metodo de la clase base fabrica persona
 
     def crear_persona(
         self,
@@ -42,7 +42,7 @@ class FabricaEstudiante(FabricaPersona):
         )
 
 
-class FabricaProfesor(FabricaPersona):
+class FabricaProfesor(FabricaPersona): #clase fabrica profesor hereda metodo de la clase base fabrica persona
 
     def crear_persona(
         self,

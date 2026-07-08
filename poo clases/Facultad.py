@@ -39,7 +39,7 @@ class Facultad:
             f"Carrera {carrera.nombreCarrera} "
             f"asignada correctamente"
         )
-
+# Método para listar todas las carreras registradas en la facultad
     def carreras_ofertadas(self):
 
         print("\n========== CARRERAS ==========")

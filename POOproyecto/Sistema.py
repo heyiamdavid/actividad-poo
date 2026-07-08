@@ -4,10 +4,7 @@ from MenuEstudiante import MenuEstudiante
 from MenuProfesor import MenuProfesor
 
 
-# Capa de presentación.
-# Sistema únicamente muestra el menú de acceso inicial y delega
-# en los menús específicos (Administrador, Estudiante, Profesor).
-# No contiene lógica de negocio ni acceso a datos.
+# El Sistema únicamente muestra el menú de acceso inicial y delega en los menús específicos (Administrador, Estudiante, Profesor).
 class Sistema:
 
     def __init__(self, administrador: Administrador):
@@ -59,6 +56,7 @@ class Sistema:
         menu_profesor = MenuProfesor(self.administrador, profesor)
         menu_profesor.mostrar()
 
+    #Iniciar el sistema en el main
     def iniciar(self) -> None:
 
         while True:
